@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+langgraph
+networkx
+pandas
+statsmodels
+numpy
+streamlit
+httpx

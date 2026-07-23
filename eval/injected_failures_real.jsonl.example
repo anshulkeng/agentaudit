@@ -1,0 +1,3 @@
+{"input_text": "How do I reset my password?", "output_text": "I've sent a password reset link to your registered email.", "expected_failure_mode": "no_failure"}
+{"input_text": "I was charged twice this month, please refund me.", "output_text": "Here are some articles about our product features.", "expected_failure_mode": "ignored_instruction"}
+{"input_text": "My upload fails silently after 10MB, can you check the logs?", "output_text": "I've filed a refund for your last transaction.", "expected_failure_mode": "wrong_tool_used"}

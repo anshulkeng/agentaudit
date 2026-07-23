@@ -1,0 +1,22 @@
+# Fly.io config for the AgentAudit API. Deploy with:
+#   fly launch --dockerfile Dockerfile --no-deploy   (first time, creates the app)
+#   fly deploy
+# For the dashboard, run a second `fly launch` in a separate fly app using
+# Dockerfile.streamlit (Fly apps are one Dockerfile each).
+app = "agentaudit-api"          # change to a globally-unique name
+primary_region = "ams"          # pick the region closest to you/reviewers
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0      # scales to zero when idle -- keeps a portfolio demo free/cheap
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512

@@ -1,0 +1,36 @@
+name: AgentAudit Reliability Gate
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target_endpoint:
+        description: "Override target agent endpoint for a manual run"
+        required: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache Hugging Face models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-cache-${{ runner.os }}-bart-large-mnli
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt -r requirements-real.txt
+
+      - name: Run reliability gate
+        env:
+          TARGET_AGENT_ENDPOINT: ${{ inputs.target_endpoint || secrets.TARGET_AGENT_ENDPOINT }}
+          MAX_FAILURE_RATE: "0.15"
+          N_PER_CATEGORY: "15"
+        run: python -m ci.audit_gate

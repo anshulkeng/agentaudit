@@ -1,0 +1,13 @@
+# Optional, additional dependencies for the REAL (non-synthetic) pipeline:
+#   redteam/generator.py   -> generate_cases_llm()
+#   redteam/dedup.py       -> dedup_cases()
+#   judging/judge_ensemble.py -> score_trace_llm() / score_batch_llm()
+#
+# Install with:  pip install -r requirements.txt -r requirements-real.txt
+#
+# These need real internet access to Hugging Face on first run to download
+# model weights (a few GB total). Run this on your own machine, not in a
+# locked-down sandbox/CI runner without HF access.
+transformers
+torch
+sentence-transformers
