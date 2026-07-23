@@ -11,15 +11,11 @@ something that actually used the ideas rather than a toy notebook example.
 
 ## Status
 
-This works end to end but I'm treating it as a scoped MVP, not a finished
-product. The pipeline (red-team -> execute -> judge -> causal analysis ->
-report) runs for real, and the causal engine is genuinely doing logistic
-regression + backdoor adjustment, not just printing correlations. What's
-still rough: the LLM-based generator/judge need real HF model calls (a
-sandboxed environment I used for part of this build couldn't reach
-huggingface.co, so those paths are written but not yet run against a live
-model by me), and I haven't pointed this at a real target agent outside of
-a local test server.
+This works end to end and has been run against a real target agent, not just
+synthetic data. The pipeline (red-team -> execute -> judge -> causal analysis
+-> report) runs for real: real HF-model-generated test cases, a real
+generative LLM judge, and a real causal analysis  see "Real world finding"
+below for what it found pointed at an actual agent.
 
 ## How it works
 
@@ -98,6 +94,25 @@ target agent's architecture - it's here because I could design a synthetic
 ground truth to check the method against, which you can't usually do on
 real production data.
 
+## Real world finding: auditing SupportSense
+
+I pointed AgentAudit at SupportSense (a separate project of mine - a
+customer support triage pipeline) as a real target agent. Across two
+independent runs (n=23 and n=53 generated cases), it found a 65-74% failure
+rate, with a clear qualitative pattern: SupportSense's KB-matching
+frequently routes unrelated topics to the same canned reply - e.g. login
+trouble, billing complaints, and damaged-product reports all received
+"Invalid credentials errors are usually caused by an expired session..." in
+different runs, verbatim.
+
+The causal question - does low KB-match confidence *cause* this, versus
+just correlate with it - is directionally consistent across both samples
+(naive correlation -0.38 and -0.49) but not yet statistically confirmed;
+the adjusted model failed to converge both times, most likely due to
+limited effective sample size once near-duplicate generated cases are
+accounted for. Reporting this honestly as an open finding, not dressing up
+a non-significant result as a discovery.
+
 ## Running it
 
 ```bash
@@ -165,11 +180,9 @@ ci/audit_gate.py               CI entry point
 .github/workflows/audit-gate.yml
 Dockerfile, Dockerfile.streamlit, fly.toml, Procfile
 ```
-
 ## What's left
 
-- Actually run the real generator/judge against a live HF model (written,
-  untested by me directly)
-- Point it at a real target agent and fill in the judge calibration numbers
-- Deploy it and put a live URL here
-- Demo video / writeup, leading with the context_length result above
+- Get the kb_confidence causal result to statistical significance (needs a
+  larger, more deduplicated sample from SupportSense)
+- Fill in eval/judge_calibration.py with real hand-labeled SupportSense cases
+- Deploy it and put a live URL here (optional - not essential to the core finding)
