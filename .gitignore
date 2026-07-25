@@ -2,4 +2,3 @@
 __pycache__/
 *.pyc
 .env
-eval/injected_failures_real.jsonl
