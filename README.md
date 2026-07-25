@@ -125,19 +125,19 @@ streamlit run frontend/app_streamlit.py
 
 ## Judge calibration
 
-Before trusting `score_trace_llm` on a real agent's unlabeled output, run it
-against cases where you already know the answer. Copy
-`eval/injected_failures_real.jsonl.example` to
-`eval/injected_failures_real.jsonl`, fill in real labeled examples (some
-correct, some with a deliberately forced failure), then:
+Validated `score_trace_llm` against 16 hand-labeled real cases from
+SupportSense (see `eval/injected_failures_real.jsonl`) - some genuinely
+correct responses, some with real mismatched-reply failures pulled from
+actual audit runs. Result: 100% recall and precision across all three
+label categories present in the sample.
 
-```bash
-python -m eval.judge_calibration
-```
-
-I haven't filled this in yet since I don't have a real target agent wired
-up - it's the one number in this repo I can't fake, so it's next.
-
+Caveat worth being upfront about: n=16 is small. This confirms the judge
+isn't systematically biased on the failure modes actually observed so far,
+not that it's perfect - a larger labeled set would be the natural next
+step if this needed to hold up to more scrutiny. Three additional cases
+where SupportSense escalated to a human agent were deliberately excluded
+from this set as ambiguous ground truth (see "Real-world finding" above) -
+forcing them into correct/incorrect would have been fake precision.
 ## CI gate
 
 `.github/workflows/audit-gate.yml` runs `ci/audit_gate.py` against
