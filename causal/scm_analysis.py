@@ -1,18 +1,3 @@
-"""
-Fits a small, EXPLICIT, human-specified causal graph over the trace data and
-compares naive correlation against a causally-adjusted effect estimate for each
-candidate failure factor. This is the core differentiator of AgentAudit: most
-eval dashboards only report correlation, which can be badly misleading when
-confounders are present (see execution/target_agent.py for the deliberately
-confounded ground truth this MVP validates against).
-
-Adjustment method: "adjust for all parents of the treatment variable in the DAG."
-This is a valid (sufficient, though not always minimal) backdoor adjustment set
-as long as the DAG has no unmeasured confounders among those parents -- a
-standard, defensible simplification for a small, fully-specified graph like this
-one. For larger or uncertain graphs, use `dowhy`'s full identification algorithm
-instead of this heuristic.
-"""
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -143,6 +128,13 @@ def analyze(df: pd.DataFrame) -> dict:
         if optional_factor in df.columns:
             candidate_factors.append(optional_factor)
 
+    # Only report graph edges that are actually relevant to what got
+    # analyzed this run -- otherwise a synthetic-mode report ends up
+    # listing category_confidence/kb_confidence edges even though those
+    # factors were never in candidate_factors for this run.
+    relevant_nodes = {"task_category", "failure"} | set(candidate_factors)
+    relevant_edges = [(a, b) for a, b in graph.edges if a in relevant_nodes and b in relevant_nodes]
+
     if df["failure_int"].nunique() <= 1:
         # Every case was judged the same way (all failures, or all correct).
         # There's nothing to explain statistically -- no factor can predict
@@ -165,7 +157,7 @@ def analyze(df: pd.DataFrame) -> dict:
             }
             for factor in candidate_factors
         }
-        return {"graph_edges": list(graph.edges), "factor_analysis": results}
+        return {"graph_edges": relevant_edges, "factor_analysis": results}
 
     results = {}
     for factor in candidate_factors:
@@ -178,6 +170,6 @@ def analyze(df: pd.DataFrame) -> dict:
         }
 
     return {
-        "graph_edges": list(graph.edges),
+        "graph_edges": relevant_edges,
         "factor_analysis": results,
     }
