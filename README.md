@@ -96,22 +96,22 @@ real production data.
 
 ## Real world finding: auditing SupportSense
 
-I pointed AgentAudit at SupportSense (a separate project of mine - a
+I pointed AgentAudit at SupportSense (a separate project of mine  a
 customer support triage pipeline) as a real target agent. Across two
 independent runs (n=23 and n=53 generated cases), it found a 65-74% failure
-rate, with a clear qualitative pattern: SupportSense's KB-matching
-frequently routes unrelated topics to the same canned reply - e.g. login
-trouble, billing complaints, and damaged-product reports all received
+rate, with a clear qualitative pattern: SupportSense's KB matching
+frequently routes unrelated topics to the same canned reply e.g. login
+trouble, billing complaints, and damaged product reports all received
 "Invalid credentials errors are usually caused by an expired session..." in
 different runs, verbatim.
 
-The causal question - does low KB-match confidence *cause* this, versus
-just correlate with it - is directionally consistent across both samples
+The causal question  does low KB match confidence *cause* this, versus
+just correlate with it  is directionally consistent across both samples
 (naive correlation -0.38 and -0.49) but not yet statistically confirmed;
 the adjusted model failed to converge both times, most likely due to
-limited effective sample size once near-duplicate generated cases are
+limited effective sample size once near duplicate generated cases are
 accounted for. Reporting this honestly as an open finding, not dressing up
-a non-significant result as a discovery.
+a non significant result as a discovery.
 
 ## Running it
 
