@@ -188,3 +188,4 @@ Dockerfile, Dockerfile.streamlit, fly.toml, Procfile
   larger, more deduplicated sample from SupportSense)
 - Fill in eval/judge_calibration.py with real hand-labeled SupportSense cases
 - Deploy it and put a live URL here (optional - not essential to the core finding)
+- The same model (Qwen2.5-1.5B-Instruct) generates test cases and judges them; a separate judge model would rule out self preference bias
