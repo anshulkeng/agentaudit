@@ -74,9 +74,11 @@ backs that up.
 Running `eval/run_eval.py` (seeded, so this is reproducible):
 
 ```
-context_length:      naive corr = +0.456  ->  adjusted = +0.027  (p=0.033)
-num_tools_available:  naive corr = -0.508  ->  adjusted = -1.047  (p<0.001)
-retry_count:          naive corr = +0.055  ->  adjusted = +0.160  (p=0.133)
+Overall failure rate: 20.9%
+
+context_length:       naive corr = +0.325  ->  adjusted = -0.011  (p=0.2577)
+num_tools_available:  naive corr = -0.404  ->  adjusted = -0.448  (p=0.0198)
+retry_count:          naive corr = +0.028  ->  adjusted = +0.086  (p=0.3272)
 ```
 
 `context_length` looks like a real driver on its own (+0.456!) but almost
